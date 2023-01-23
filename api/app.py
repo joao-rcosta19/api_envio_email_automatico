@@ -10,11 +10,16 @@ app = Flask(__name__, template_folder="public")
 def index():
     return render_template('index.html')
 
+@app.route('/erro')
+def erro():
+    return render_template('erro.html')
+
 @app.route('/validar', methods=['POST'])
 def validaChave():
     if request.method == 'POST':
         result = request.form['chave']
         validar = buscar(result, "instituicao", "chave_toker")
+        print(validar)
         if validar == True:
             a = buscar(request.form['endereco'], "lista_email2", "email")
             if a != True:
@@ -29,12 +34,13 @@ def validaChave():
             #enviar email
             if buscarsituacao(request.form['endereco'], "lista_email2", "email", 2) == True:
                 enviaremail(request.form['assunto'], request.form['corpo'], request.form['endereco'])
-                print("Email enviado!")
+                return {'chave': request.form['chave'], 'assunto do email': request.form['assunto'], 'corpo do email': request.form['corpo'], 'destinatario': request.form['endereco'], 'status': 'Enviado!'}
+                #print("Email enviado!")
             else:
-                print("Email não enviado!")
-        return redirect(url_for('index'))
+                return {'status': 'Nao Enviado! verifique o endereco de email...', 'destinatario': request.form['endereco']}
+        return redirect(url_for('erro'))
 
 
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run(debug=True, host='10.0.0.118', port='3000')

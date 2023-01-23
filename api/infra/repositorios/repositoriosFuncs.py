@@ -44,7 +44,7 @@ def enviaremail(assunto, texto, endereco):
     host = "smtp.gmail.com"
     port = "587"
     login = "conexaodigitalcameta@gmail.com"
-    senha = "123"
+    senha = ""
 
     server = smtplib.SMTP(host, port)
 
