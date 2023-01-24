@@ -17,28 +17,48 @@ def erro():
 @app.route('/validar', methods=['POST'])
 def validaChave():
     if request.method == 'POST':
-        result = request.form['chave']
-        validar = buscar(result, "instituicao", "chave_toker")
-        print(validar)
+        chave = request.form['chave']
+        email = request.form['endereco']
+        assunto = request.form['assunto'] 
+        corpo = request.form['corpo']
+
+        validar = buscar(chave, "instituicao", "chave_toker")
         if validar == True:
-            a = buscar(request.form['endereco'], "lista_email2", "email")
+            frase = " "
+            if validaCampo(email) == False:
+                return {'status': 'Nao Enviado! verifique se o campo endereco de email esta vazio!', 'endereco': email}
+            elif frase not in email:
+                a = buscar(email, "lista_email2", "email")
+            else:
+                teste = email.replace(" ","")
+                a = buscar(teste, "lista_email2", "email")
+                email = teste
+            #inserindo e validando email
             if a != True:
-                inserindoEmail(request.form['endereco'], "lista_email2", result)
-            teste = validaEmail(request.form['endereco'])
+                inserindoEmail(email, "lista_email2", chave)
+            teste = validaEmail(email)
             if teste == True: 
-                if buscarsituacao(request.form['endereco'], "lista_email2", "email", 2) == False:
-                    atualizaSitEmail("lista_email2", 2, request.form['endereco']) #para validos 
+                if buscarsituacao(email, "lista_email2", "email", 2) == False:
+                    atualizaSitEmail("lista_email2", 2, email) #para validos 
             else:
-                if buscarsituacao(request.form['endereco'], "lista_email2", "email", 1) == False:
-                    atualizaSitEmail("lista_email2", 1, request.form['endereco']) #para invalidos
+                if buscarsituacao(email, "lista_email2", "email", 1) == False:
+                    atualizaSitEmail("lista_email2", 1, email) #para invalidos
+            
             #enviar email
-            if buscarsituacao(request.form['endereco'], "lista_email2", "email", 2) == True:
-                enviaremail(request.form['assunto'], request.form['corpo'], request.form['endereco'])
-                return {'chave': request.form['chave'], 'assunto do email': request.form['assunto'], 'corpo do email': request.form['corpo'], 'destinatario': request.form['endereco'], 'status': 'Enviado!'}
-                #print("Email enviado!")
+            if validaCampo(assunto) == True and validaCampo(corpo) == True:
+                if buscarsituacao(email, "lista_email2", "email", 2) == True:
+                    enviaremail(assunto, corpo, email)
+                    return {'chave': chave, 'assunto do email': assunto, 'corpo do email': corpo, 'destinatario': email, 'status': 'Enviado!'}
+                    #print("Email enviado!")
+                else:
+                    return {'status': 'Nao Enviado! verifique o endereco de email...', 'destinatario': email}
+            elif validaCampo(assunto) == False:
+                return {'status': 'Nao Enviado! verifique se o campo Assunto esta vazio!', 'assunto do email': assunto}
+            elif validaCampo(corpo) == False:
+                return {'status': 'Nao Enviado! verifique se o campo Corpo do email esta vazio!', 'corpo do email': corpo}
             else:
-                return {'status': 'Nao Enviado! verifique o endereco de email...', 'destinatario': request.form['endereco']}
-        return redirect(url_for('erro'))
+                return {'status': 'Nao Enviado! verifique se o campo Assunto e Corpo do email estao vazio!', 'assunto do email': assunto , 'corpo do email': corpo}
+        return {'status': 'Nao Enviado! verifique sua chave!', 'chave inserida': chave} #redirect(url_for('erro'))
 
 
 

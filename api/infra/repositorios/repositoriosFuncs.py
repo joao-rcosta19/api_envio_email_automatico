@@ -5,15 +5,11 @@ from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 
 
-def validaCampo(campo, obs):
-    while True:
-        n = False
-        if not campo or campo.isspace() == True:
-            print(f"ERRO! {obs} Vazio!")
-            campo = input(f"Digite o {obs}: ")
-        else:
-            #print(f"{obs} ok!")
-            break
+def validaCampo(campo):
+    if not campo or campo.isspace() == True:
+        return False
+    else:
+        return True
 
 def validaCampoEmail(campo, obs):
     while True:
