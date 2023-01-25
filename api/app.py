@@ -6,8 +6,6 @@ from infra.repositorios.repositoriosFuncs import validaCampo, validaCampoEmail, 
 
 app = Flask(__name__, template_folder="public")
 
-
-
 @app.route('/')
 def index():
     return render_template('index.html')
@@ -61,7 +59,6 @@ def validaChave():
             else:
                 return json.dumps({'status': 'Nao Enviado! verifique se o campo Assunto e Corpo do email estao vazio!', 'assunto do email': assunto , 'corpo do email': corpo})
         return json.dumps({'status': 'Nao Enviado! verifique sua chave!', 'chave inserida': chave}) #redirect(url_for('erro'))
-
 
 
 if __name__ == "__main__":
