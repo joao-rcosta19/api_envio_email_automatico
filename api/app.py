@@ -2,9 +2,20 @@ from flask import Flask, render_template, request, redirect, url_for, Response
 import json
 from infra.config.database import buscar, atualizaSitEmail, conectar, close, inserindoEmail, buscarsituacao
 from infra.repositorios.repositoriosFuncs import validaCampo, validaCampoEmail, validaEmail, enviaremail
+from pydantic import BaseModel
 
 
 app = Flask(__name__, template_folder="public")
+
+requisicao = [
+    {
+        'chave': int
+        'email': str
+        'assunto': str
+        'corpo': str
+    }
+]
+    
 
 @app.route('/')
 def index():
@@ -17,10 +28,9 @@ def erro():
 @app.route('/validar', methods=['GET','POST'])
 def validaChave():
     if request.method == 'POST':
-        chave = request.form['chave']
-        email = request.form['endereco']
-        assunto = request.form['assunto'] 
-        corpo = request.form['corpo']
+        dados = request.json
+        requisicao = dados
+        chave = requisicao.c
 
         validar = buscar(chave, "instituicao", "chave_toker")
         if validar == True:
